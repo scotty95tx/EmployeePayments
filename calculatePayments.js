@@ -132,11 +132,7 @@ class CalculateSuperPay extends PaymentCalculator {
     }
 }
 
-const bobPayCalc = new PaymentCalculator()
-const williamPayCalc = new PaymentCalculator()
-const thomasPayCalc = new PaymentCalculator()
-const ragnarPayCalc = new PaymentCalculator()
-console.log(bobPayCalc.calculateEmployeePayment(1079, employeeData, payrollExport))
-console.log(williamPayCalc.calculateEmployeePayment(4020, employeeData, payrollExport))
-console.log(thomasPayCalc.calculateEmployeePayment(123, employeeData, payrollExport))
-console.log(ragnarPayCalc.calculateEmployeePayment(8759, employeeData, payrollExport))
+console.log(new PaymentCalculator().calculateEmployeePayment(1079, employeeData, payrollExport))
+console.log(new PaymentCalculator().calculateEmployeePayment(4020, employeeData, payrollExport))
+console.log(new PaymentCalculator().calculateEmployeePayment(123, employeeData, payrollExport))
+console.log(new PaymentCalculator().calculateEmployeePayment(8759, employeeData, payrollExport))
