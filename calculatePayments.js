@@ -45,94 +45,98 @@ const employeeData = {
 const payrollExport = [{id: 8759, hours: 50}, {id: 4020, hours: 55}, {id: 1079, hours: 45}, {id: 123, hours: 52}]
 
 class PaymentCalculator {
-    constructor(payrollExport, employeeData, id) {
-        this.payrollExport = payrollExport
-        this.employeeData = employeeData
-        this.id = employeeData[id].id
-        this.type = employeeData[id].type
-        this.name = employeeData[id].name
-        this.hourlyRate = employeeData[id].hourlyRate
-        this.hoursWorked = this.getHoursWorked()
+    constructor() {
     }
 
-    calculateEmployeePayment() {
+    calculateEmployeePayment(id, employeeData, payrollExport) {
+            this.type = employeeData[id].type
             if (this.type === "Laborer") {
-                return new CalculateLaborerPay(this.payrollExport, this.employeeData, this.id).calculateLaborerPay(this.hoursWorked)
+                return new CalculateLaborerPay(id, employeeData, payrollExport).calculateLaborerPay()
             } else if (this.type === "Foreman") {
-                return new CalculateForemanPay(this.payrollExport, this.employeeData, this.id).calculateForemanPay(this.hoursWorked)
+                return new CalculateForemanPay(id, employeeData, payrollExport).calculateForemanPay()
             } else if (this.type === "Superintindent") {
-                return new CalculateSuperPay(this.payrollExport, this.employeeData, this.id).calculateSuperPay(this.hoursWorked)
+                return new CalculateSuperPay(id, employeeData, payrollExport).calculateSuperPay()
             } else {
-                return {SUCCESS: false, ERROR: `Employee: ${this.name} Id: ${this.id}, does not have a valid type. Please resolve before proceeding with payroll`}
+                return {SUCCESS: false, ERROR: `Employee does not have a valid type. Please resolve before proceeding with payroll`}
             }
     }
 
-    getHoursWorked() {
-        let hoursWorked = 0
-
-        for (let i = 0; i < this.payrollExport.length; i++) {
-            if (this.payrollExport[i].id === this.id) {
-                hoursWorked = this.payrollExport[i].hours
+    getHoursWorked(payrollExport) {
+        for (let i = 0; i < payrollExport.length; i++) {
+            if (payrollExport[i].id === this.id) {
+                this.hoursWorked = payrollExport[i].hours
             }
         }
+    }
 
-        return hoursWorked
+    getUpdatedEmployeeInfo(id, employeeData) {
+        this.employeeData = employeeData
+        this.id = employeeData[id].id
+        this.name = employeeData[id].name
+        this.hourlyRate = employeeData[id].hourlyRate
+        this.type = employeeData[id].type
     }
 }
 
 class CalculateLaborerPay extends PaymentCalculator {
-    constructor(payrollExport, employeeData, name, type, hourlyRate) {
-        super(payrollExport, employeeData, name, type, hourlyRate)
+    constructor(id, employeeData, payrollExport) {
+        super()
+        super.getUpdatedEmployeeInfo(id, employeeData)
+        super.getHoursWorked(payrollExport)
     }
 
-    calculateLaborerPay(hoursWorked) {
-        let totalPay = this.hourlyRate * hoursWorked
 
-        if (hoursWorked > 10) {
-            totalPay += hoursWorked * 1 + 20
+    calculateLaborerPay() {
+        this.totalPay = this.hourlyRate * this.hoursWorked
+        if (this.hoursWorked > 10) {
+            this.totalPay += this.hoursWorked * 1 + 20
         }
         
-        return {hours: hoursWorked, name: this.name, type: this.type, pay: totalPay}
+        return {SUCCESS: true, ERROR: 'none', hours: this.hoursWorked, name: this.name, type: this.type, pay: this.totalPay}
     }
 }
 
 class CalculateForemanPay extends PaymentCalculator {
-    constructor(payrollExport, employeeData, id, name, hourlyRate) {
-        super(payrollExport, employeeData, id, name, hourlyRate)
+    constructor(id, employeeData, payrollExport) {
+        super()
+        super.getUpdatedEmployeeInfo(id, employeeData)
+        super.getHoursWorked(payrollExport)
     }
 
-    calculateForemanPay(hoursWorked) {
-        let totalPay = this.hourlyRate * hoursWorked
+    calculateForemanPay() {
+        this.totalPay = this.hourlyRate * this.hoursWorked
 
-        if (hoursWorked > 15) {
-            totalPay += this.hourlyRate * .05 * hoursWorked
+        if (this.hoursWorked > 15) {
+            this.totalPay += this.hourlyRate * .05 * this.hoursWorked
         }
 
-        return {hours: hoursWorked, name: this.name, type: this.type, pay: totalPay}
+        return {SUCCESS: true, ERROR: 'none', hours: this.hoursWorked, name: this.name, type: this.type, pay: this.totalPay}
     }
 }
 
 class CalculateSuperPay extends PaymentCalculator {
-    constructor(payrollExport, employeeData, id, name, hourlyRate) {
-        super(payrollExport, employeeData, id, name, hourlyRate)
+    constructor(id, employeeData, payrollExport) {
+        super()
+        super.getUpdatedEmployeeInfo(id, employeeData)
+        super.getHoursWorked(payrollExport)
     }
 
-    calculateSuperPay(hoursWorked) {
-        let totalPay = this.hourlyRate * hoursWorked
+    calculateSuperPay() {
+        this.totalPay = this.hourlyRate * this.hoursWorked
 
         if (this.hoursWorked > 20) {
-            totalPay += 50
+            this.totalPay += 50
         }
 
-        return {hours: hoursWorked, name: this.name, type: this.type, pay: totalPay}
+        return {SUCCESS: true, ERROR: 'none', hours: this.hoursWorked, name: this.name, type: this.type, pay: this.totalPay}
     }
 }
 
-const bobPay = new PaymentCalculator(payrollExport, employeeData, 1079).calculateEmployeePayment()
-const williamPay = new PaymentCalculator(payrollExport, employeeData, 4020).calculateEmployeePayment()
-const thomasPay = new PaymentCalculator(payrollExport, employeeData, 123).calculateEmployeePayment()
-const ragnarPay = new PaymentCalculator(payrollExport, employeeData, 8759).calculateEmployeePayment()
-console.log(bobPay)
-console.log(williamPay)
-console.log(thomasPay)
-console.log(ragnarPay)
+const bobPayCalc = new PaymentCalculator()
+const williamPayCalc = new PaymentCalculator()
+const thomasPayCalc = new PaymentCalculator()
+const ragnarPayCalc = new PaymentCalculator()
+console.log(bobPayCalc.calculateEmployeePayment(1079, employeeData, payrollExport))
+console.log(williamPayCalc.calculateEmployeePayment(4020, employeeData, payrollExport))
+console.log(thomasPayCalc.calculateEmployeePayment(123, employeeData, payrollExport))
+console.log(ragnarPayCalc.calculateEmployeePayment(8759, employeeData, payrollExport))
