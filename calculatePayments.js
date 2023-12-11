@@ -2,6 +2,14 @@ class PaymentCalculator {
     constructor() {
     }
 
+    calculateAllEmployeePay(employeeData, payrollExport) {
+        let employeePay = []
+        for (let i = 0; i < payrollExport.length; i++) {
+            employeePay.push(this.calculateEmployeePayment(payrollExport[i].id, employeeData, payrollExport))
+        }
+        return employeePay
+    }
+
     calculateEmployeePayment(id, employeeData, payrollExport) {
             this.type = employeeData[id].type
             if (this.type === "Laborer") {
@@ -127,7 +135,6 @@ const employeeData = {
         hourlyRate: 30,
         type: "Laborer"
     }
-
 }
 
 const payrollExport = [{id: 8759, hours: 50}, {id: 4020, hours: 55}, {id: 1079, hours: 45}, {id: 123, hours: 52}]
@@ -136,3 +143,4 @@ console.log(new PaymentCalculator().calculateEmployeePayment(1079, employeeData,
 console.log(new PaymentCalculator().calculateEmployeePayment(4020, employeeData, payrollExport))
 console.log(new PaymentCalculator().calculateEmployeePayment(123, employeeData, payrollExport))
 console.log(new PaymentCalculator().calculateEmployeePayment(8759, employeeData, payrollExport))
+console.log(new PaymentCalculator().calculateAllEmployeePay(employeeData, payrollExport))
